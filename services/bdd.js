@@ -54,7 +54,26 @@ const create = async (nom, montant, categorie, date) => {
                     resolve(resultSet.insertId)
                 },
                 (_, error) => {
-                    console.error("Erreur lors de la récupération des dépense.", error)
+                    console.error("Erreur lors de la récupération des dépenses.", error)
+                    reject(error)
+                }
+            )
+        })
+    });
+}
+
+const remove = async (id) => {
+    return new Promise((resolve, reject) => {
+        db.transaction(tx => {
+            tx.executeSql(
+                `DELETE FROM depenses WHERE id = ?`,
+                [id],
+                (_, resultSet) => {
+                    console.log("Element supprimé")
+                    resolve(true)
+                },
+                (_, error) => {
+                    console.error("Erreur lors de la suppression de la dépense.", error)
                     reject(error)
                 }
             )
@@ -66,5 +85,6 @@ export {
     db,
     setupDatabase,
     findAll,
-    create
+    create,
+    remove
 }

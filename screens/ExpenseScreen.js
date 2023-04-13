@@ -1,8 +1,8 @@
-import {FlatList, StyleSheet, Text, View} from "react-native";
+import {FlatList, Pressable, StyleSheet, Text, View} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useCallback, useEffect, useState} from "react";
-import {findAll} from "../services/bdd";
+import {findAll, remove} from "../services/bdd";
 
 const DATA = [
     {
@@ -37,7 +37,8 @@ export const ExpenseScreen = () => {
         useCallback(() => {
             findAll()
                 .then(list => setDataList(list))
-            return () => {}
+            return () => {
+            }
         }, [])
     )
 
@@ -46,11 +47,15 @@ export const ExpenseScreen = () => {
             .then(list => setDataList(list))
     }, [])
 
+    const handleDelete = (id) => {
+        setDataList(dataList.filter(item => item.id !== id))
+    }
+
     return (
         <View style={{flex: 1}}>
             {dataList.length > 0 &&
                 <FlatList data={dataList}
-                          renderItem={({item}) => <Card data={item}/>}
+                          renderItem={({item}) => <Card data={item} onDelete={handleDelete}/>}
                           keyExtractor={item => item.id}
                 />
             }
@@ -67,16 +72,23 @@ export const ExpenseScreen = () => {
     )
 }
 
-const Card = ({data}) => {
+const Card = ({data, onDelete}) => {
     return (
-        <View style={styles.card}>
-            <Text style={styles.cardText}>{data.nom}</Text>
-            <View style={styles.cardInfo}>
-                <Text style={styles.montant}>{data.montant} €</Text>
-                <Text>{data.categorie}</Text>
+        <Pressable
+            onLongPress={() => {
+                console.log("suppression")
+                remove(data.id)
+                onDelete(data.id)
+            }}>
+            <View style={styles.card}>
+                <Text style={styles.cardText}>{data.nom}</Text>
+                <View style={styles.cardInfo}>
+                    <Text style={styles.montant}>{data.montant} €</Text>
+                    <Text>{data.categorie}</Text>
+                </View>
+                <Text>{data.date}</Text>
             </View>
-            <Text>{data.date}</Text>
-        </View>
+        </Pressable>
     )
 }
 
