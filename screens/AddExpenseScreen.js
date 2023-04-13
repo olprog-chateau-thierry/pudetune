@@ -1,6 +1,6 @@
-import {Button, Pressable, Text, View} from "react-native";
+import {Pressable, Text, View} from "react-native";
 import {TextInput} from "@react-native-material/core";
-import RNDateTimePicker, {DateTimePickerAndroid} from "@react-native-community/datetimepicker";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {useEffect, useState} from "react";
 
 export const AddExpenseScreen = () => {
