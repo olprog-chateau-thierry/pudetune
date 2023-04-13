@@ -44,8 +44,27 @@ const findAll = async () => {
     });
 }
 
+const create = async (nom, montant, categorie, date) => {
+    return new Promise((resolve, reject) => {
+        db.transaction(tx => {
+            tx.executeSql(
+                `INSERT INTO depenses VALUES (null, ?, ?, ?, ?)`,
+                [nom, montant, categorie, date],
+                (_, resultSet) => {
+                    resolve(resultSet.insertId)
+                },
+                (_, error) => {
+                    console.error("Erreur lors de la récupération des dépense.", error)
+                    reject(error)
+                }
+            )
+        })
+    });
+}
+
 export {
     db,
     setupDatabase,
-    findAll
+    findAll,
+    create
 }

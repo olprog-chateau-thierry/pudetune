@@ -1,6 +1,8 @@
 import {FlatList, StyleSheet, Text, View} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {useCallback, useEffect, useState} from "react";
+import {findAll} from "../services/bdd";
 
 const DATA = [
     {
@@ -29,12 +31,29 @@ const DATA = [
 export const ExpenseScreen = () => {
     const navigation = useNavigation();
 
+    const [dataList, setDataList] = useState([])
+
+    useFocusEffect(
+        useCallback(() => {
+            findAll()
+                .then(list => setDataList(list))
+            return () => {}
+        }, [])
+    )
+
+    useEffect(() => {
+        findAll()
+            .then(list => setDataList(list))
+    }, [])
+
     return (
         <View style={{flex: 1}}>
-            <FlatList data={DATA}
-                      renderItem={({item}) => <Card data={item}/>}
-                      keyExtractor={item => item.id}
-            />
+            {dataList.length > 0 &&
+                <FlatList data={dataList}
+                          renderItem={({item}) => <Card data={item}/>}
+                          keyExtractor={item => item.id}
+                />
+            }
             <Ionicons
                 name="add-circle"
                 size={60}
